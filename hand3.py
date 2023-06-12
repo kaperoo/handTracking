@@ -13,6 +13,8 @@ mp_drawing = mp.solutions.drawing_utils
 p_time = 0
 c_time = 0
 
+p_x, p_y = 5, 5
+
 while cap.isOpened():
     success, img = cap.read()
     
@@ -37,8 +39,24 @@ while cap.isOpened():
     # get the position of the index finger
     if results.multi_hand_landmarks:
         index = results.multi_hand_landmarks[0].landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
-        x, y = int(index.x*1920), int(index.y*1080)
-        pg.moveTo(x, y)
+        x, y = int(index.x*2880), int(index.y*1620)
+        
+        x = x - 480
+        y = y - 270
+
+        if abs(p_x-x) > 5 or abs(p_y-y) > 5:
+            if x > 1919:
+                x = 1919
+            if y > 1079:
+                y = 1079
+            if x < 0:
+                x = 0
+            if y < 0:
+                y = 0
+
+            pg.moveTo(x, y)
+
+        p_x, p_y = x, y
 
     cv2.imshow('MediaPipe Hands', img)
     cv2.waitKey(1)
